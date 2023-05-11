@@ -8,5 +8,9 @@ class User < ApplicationRecord
     has_many :blogs
     has_many :comments
 
+    def update_blogs_counter
+        self.blogs_counter = self.blogs.count
+        self.save
+    end
     
 end
