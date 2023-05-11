@@ -1,46 +1,35 @@
 class CommentsController < ApplicationController
-      before_action :find_comment, only: [:show, :update, :destroy]
 
   # GET /comments
   def index
-    @comments = Comment.all
-
-    render json: @comments
+    comments = Comment.all
+    render json: comments , status: :ok
   end
 
   # GET /comments/1
   def show
-    render json: @comment
+    comment = find_comment
+    render json: comment, status: :ok
   end
 
   # POST /comments
   def create
-    @comment = Comment.new(comment_params)
-
-    if @comment.save
-      # update the comments_counter for the associated blog
-      @comment.blog.update_comments_counter
-      
-      render json: @comment, status: :created, location: @comment
-    else
-      render json: @comment.errors, status: :unprocessable_entity
-    end
+    comment = Comment.create!(blog_params)
+    render json: comment, except:[:created_at, :updated_at], status: :created
   end
 
   # PATCH/PUT /comments/1
   def update
-    if @comment.update(comment_params)
-      render json: @comment
-    else
-      render json: @comment.errors, status: :unprocessable_entity
-    end
+    comment = find_comment
+    comment.update(blog_params)
+    render json: comment, except:[:created_at, :updated_at], status: :ok
   end
 
   # DELETE /comments/1
   def destroy
-    
-    @comment.blog.update_comments_counter
-    @comment.destroy
+    comment = find_comment 
+    comment.blog.update_comments_counter
+    comment.destroy
     
     head :no_content
   end
@@ -48,7 +37,7 @@ class CommentsController < ApplicationController
   private
     
     def find_comment
-      @comment = Comment.find(params[:id])
+      comment = Comment.find(params[:id])
     end
 
 
