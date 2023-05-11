@@ -18,9 +18,10 @@ class BlogsController < ApplicationController
         @blog = Blog.new(blog_params)
 
         if @blog.save
-        render json: @blog, status: :created, location: @blog
+            @blog.user.update_blogs_counter
+            render json: @blog, status: :created, location: @blog
         else
-        render json: @blog.errors, status: :unprocessable_entity
+            render json: @blog.errors, status: :unprocessable_entity
         end
     end
 
@@ -35,7 +36,11 @@ class BlogsController < ApplicationController
 
     # DELETE /blogs/1
     def destroy
+        @blog.user.update_blogs_counter
         @blog.destroy
+
+        head :no_content
+
     end
 
     private
@@ -47,7 +52,7 @@ class BlogsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def blog_params
-        params.require(:blog).permit(:title, :text, :user_id)
+        params.require(:blog).permit(:title, :body, :user_id)
     end
 
 end
