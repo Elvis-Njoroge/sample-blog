@@ -1,6 +1,6 @@
 
 # Sample Blog
-Overview
+## Overview
 This is a sample blog API created as an assessment for  backend developer role at Uamuzi. The project is built with on the Ruby on Rails framework.
 
 
