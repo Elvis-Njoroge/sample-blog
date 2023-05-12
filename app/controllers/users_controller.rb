@@ -1,37 +1,42 @@
 class UsersController < ApplicationController
-    rescue_from ActiveRecord::RecordInvalid, with: :render_unprocessable_entity
-    before_action :find_user, only: [:show, :update, :destroy]
-    wrap_parameters format:[]
 
   # GET /users
   def index
     users = User.all
-    render json: users,  only:[:name, :email]
+    render json: users,  only:[:id, :name, :email, :blogs_counter]
   end
 
   # GET /users/1
 def show
-  current_user = User.find(session[:user_id])
-  render json: current_user,  only:[:name, :email]
+    user = find_user
+    render json: user, except:[:created_at, :updated_at, :password_digest]
 end
+
+
+# show the logged in user
+    def current_user
+        current_user = User.find(session[:user_id])
+        render json: current_user,  only:[:id, :name, :email]
+    end
 
   # POST /users
   def create
     user = User.create!(user_params)
-    render json: user, only:[:name, :email], status: :created
+    render json: user, only:[:name, :email, :blogs_counter], status: :created
   end
 
   # PATCH/users/1
   def update
-    if user.update(user_params)
-      render json: user
-    else
-      render json: user.errors, status: :unprocessable_entity
-    end
+    user = find_user
+    user.update(user_params)
+    render json: user, except:[:password_digest, :created_at, :updated_at], status: :ok
   end
 
   # DELETE /users/1
   def destroy
+    user= find_user
+    user.comments.destroy_all
+    user.blogs.destroy_all
     user.destroy
   end
 
@@ -51,9 +56,5 @@ end
    
     def user_params
       params.permit(:name, :email, :password)
-    end
-
-     def render_unprocessable_entity(invalid)
-        render json:{error:invalid.record.errors.full_messages}  ,status: :unprocessable_entity
     end
 end

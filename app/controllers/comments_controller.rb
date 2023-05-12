@@ -14,14 +14,14 @@ class CommentsController < ApplicationController
 
   # POST /comments
   def create
-    comment = Comment.create!(blog_params)
+    comment = Comment.create!(comment_params)
     render json: comment, except:[:created_at, :updated_at], status: :created
   end
 
   # PATCH/PUT /comments/1
   def update
     comment = find_comment
-    comment.update(blog_params)
+    comment.update(comment_params)
     render json: comment, except:[:created_at, :updated_at], status: :ok
   end
 
@@ -42,7 +42,7 @@ class CommentsController < ApplicationController
 
 
     def comment_params
-      params.require(:comment).permit(:body, :user_id, :blog_id)
+      params.permit(:body, :user_id, :blog_id)
     end
 
 end
