@@ -92,8 +92,8 @@ To set up the Project locally, follow these steps:
 
 ## Login Credentials
 
-email: njoro@example.com
-password: 123456
+email: user1@example.com
+password: password1
 ## Developer
 Elvis Njoroge
 
