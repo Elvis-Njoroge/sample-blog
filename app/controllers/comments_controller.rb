@@ -15,14 +15,14 @@ class CommentsController < ApplicationController
   # POST /comments
   def create
     comment = Comment.create!(comment_params)
-    render json: comment, except:[:created_at, :updated_at], status: :created
+    render json: comment, status: :created
   end
 
   # PATCH/PUT /comments/1
   def update
     comment = find_comment
     comment.update(comment_params)
-    render json: comment, except:[:created_at, :updated_at], status: :ok
+    render json: comment, status: :ok
   end
 
   # DELETE /comments/1

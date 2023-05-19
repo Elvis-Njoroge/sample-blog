@@ -5,32 +5,32 @@ class BlogsController < ApplicationController
     # GET /blogs
     def index
         blogs = Blog.all
-        render json: blogs, except:[:created_at, :updated_at]
+        render json: blogs, include: :comments
     end
 
     # GET /blogs/1
     def show
         blog = find_blog
-        render json: blog, except:[:created_at, :updated_at]
+        render json: blog, include: :comments
     end
 
     # POST /blogs
     def create
         blog = Blog.create!(blog_params)
-        render json: blog, except:[:created_at, :updated_at]
+        after_save :update_posts_counter_add
+        render json: blog
     end
 
     # PATCH/PUT /blogs/1
     def update
         blog = find_blog
         blog.update(blog_params)
-        render json: blog, except:[:created_at, :updated_at], status: :ok
+        render json: blog, status: :ok
     end
 
     # DELETE /blogs/1
     def destroy
         blog = find_blog
-        blog.user.update_blogs_counter
         blog.comments.destroy_all
         blog.destroy
 

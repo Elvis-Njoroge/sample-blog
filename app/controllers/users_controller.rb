@@ -3,33 +3,33 @@ class UsersController < ApplicationController
   # GET /users
   def index
     users = User.all
-    render json: users,  only:[:id, :name, :email, :blogs_counter]
+    render json: users
   end
 
   # GET /users/1
 def show
     user = find_user
-    render json: user, except:[:created_at, :updated_at, :password_digest]
+    render json: user
 end
 
 
 # show the logged in user
     def current_user
         current_user = User.find(session[:user_id])
-        render json: current_user,  only:[:id, :name, :email]
+        render json: current_user
     end
 
   # POST /users
   def create
     user = User.create!(user_params)
-    render json: user, only:[:name, :email, :blogs_counter], status: :created
+    render json: user, status: :created
   end
 
   # PATCH/users/1
   def update
     user = find_user
     user.update(user_params)
-    render json: user, except:[:password_digest, :created_at, :updated_at], status: :ok
+    render json: user, status: :ok
   end
 
   # DELETE /users/1
@@ -44,7 +44,7 @@ end
   def update_blogs_counter
     user = User.find(params[:id])
     user.update_attribute(:blogs_counter, user.blogs.count)
-    render json: user,  except:[:password_digest, :created_at, :updated_at]
+    render json: user
   end
 
   private

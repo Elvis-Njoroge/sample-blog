@@ -19,7 +19,7 @@ end
   blog = Blog.order("RANDOM()").first
   Comment.create!(
     body: Faker::Lorem.paragraph(sentence_count: 1),
-    user_id: user.id
+    user_id: user.id,
     blog_id: blog.id
   )
 end
