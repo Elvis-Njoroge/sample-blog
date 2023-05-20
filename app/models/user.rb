@@ -6,12 +6,7 @@ class User < ApplicationRecord
     validates :email, presence: true, uniqueness: true
     validates :password, presence: true
 
-    has_many :blogs
-    has_many :comments
+    has_many :blogs, dependent: :destroy
+    has_many :comments, dependent: :destroy
 
-    def update_blogs_counter
-        self.blogs_counter = self.blogs.count
-        self.save
-    end
-    
 end

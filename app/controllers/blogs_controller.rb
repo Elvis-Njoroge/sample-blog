@@ -1,52 +1,68 @@
 class BlogsController < ApplicationController
-    # before_action :authenticate_user!, except: [:index, :show]
-    before_action :find_blog, only: [:show, :update, :destroy]
-
     # GET /blogs
     def index
         blogs = Blog.all
-        render json: blogs, include: :comments
+        if blogs
+            render json: blogs, include: :comments
+        else
+            render json: { error: 'Blogs not found' }, status: :not_found
+        end
     end
 
     # GET /blogs/1
     def show
         blog = find_blog
-        render json: blog, include: :comments
+        if blog
+            render json: blog, include: :comments,  state: :ok
+        else
+            render_record_not_found
+        end
     end
 
     # POST /blogs
     def create
-        blog = Blog.create!(blog_params)
-        after_save :update_posts_counter_add
-        render json: blog
+        blog = Blog.new(blog_params)
+        if blog.save
+            render json: blog, status: "SUCCESS", message: "Blog was created successfully!", status: :created
+        else
+            render json: blog.errors, status: :unprocessable_entity
+        end
     end
 
     # PATCH/PUT /blogs/1
     def update
         blog = find_blog
-        blog.update(blog_params)
-        render json: blog, status: :ok
+        if blog
+            blog.update!(blog_params)
+            render json: blog, message: "Blog was updated successfully", status: :ok
+        else
+            render json: {message: "Blog cannot be updated"}, status: :unprocessable_entity
+        end
     end
 
     # DELETE /blogs/1
     def destroy
         blog = find_blog
-        blog.comments.destroy_all
-        blog.destroy
-
-        head :no_content
-
+        if blog
+            blog.destroy!
+            render json: {message: "Blog was deleted successfully"}, status: :no_content
+        else
+            render json: {message: "Blog does not exist"}, status: :bad_request
+        end
     end
 
     private
 
     def find_blog
-        blog = Blog.find(params[:id])
+        blog = Blog.find_by(id: params[:id])
     end
-
    
     def blog_params
         params.permit(:title, :body, :user_id)
+    end
+
+    def render_record_not_found
+      render json: { error: 'Blog not found' }, status: :not_found
     end
 
 end
