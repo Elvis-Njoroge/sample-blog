@@ -9,7 +9,7 @@ class UsersController < ApplicationController
   # GET /users/1
 def show
     user = find_user
-    render json: user
+    render json: user, include: :blogs
 end
 
 
@@ -42,7 +42,7 @@ end
 
   # custom method to update blogs_counter for a user
   def update_blogs_counter
-    user = User.find(params[:id])
+    user = find_user
     user.update_attribute(:blogs_counter, user.blogs.count)
     render json: user
   end
@@ -50,7 +50,7 @@ end
   private
 
     def find_user
-      user = User.find(params[:id])
+      User.find(params[:id])
     end
 
    
