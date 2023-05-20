@@ -1,9 +1,17 @@
 Rails.application.routes.draw do
-  resources :blogs
+  # mount Rswag::Ui::Engine => '/api-docs'
+  # mount Rswag::Api::Engine => '/api-docs'
+  resources :blogs do
+    resources :comments
+  end
   resources :comments
-  resources :users
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  resources :users do
+    resources :blogs
+  end
 
-  # Defines the root path route ("/")
-  # root "articles#index"
+
+  get "/auth",to: "users#current_user"
+  post "/login",to: "sessions#create"
+  delete "/logout",to: "sessions#destroy"
+
 end
